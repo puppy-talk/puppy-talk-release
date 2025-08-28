@@ -1,0 +1,6 @@
+[submodule "puppy-talk-server"]
+	path = puppy-talk-server
+	url = https://github.com/puppy-talk/puppy-talk-server.git
+[submodule "puppy-talk-llm"]
+	path = puppy-talk-llm
+	url = https://github.com/puppy-talk/puppy-talk-llm.git
