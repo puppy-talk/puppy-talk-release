@@ -12,65 +12,33 @@ permissions:
 jobs:
   backend-cd:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./puppy-talk-server
-        
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Initialize Submodule
-        working-directory: ./
+      - name: Update and Init Submodule
         run: |
-          echo "=== Initializing submodule ==="
-          git submodule update --init --recursive
-          
-          echo "=== Verifying submodule contents ==="
-          ls -la puppy-talk-server/
-          
-          echo "=== Checking Gradle Wrapper ==="
-          if [ -f puppy-talk-server/gradlew ]; then
-            echo "✓ gradlew found"
-          else
-            echo "✗ gradlew not found"
-            exit 1
-          fi
+          git submodule update --remote --recursive --init
+          cd puppy-talk-server
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
-
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-          gradle-version: '8.5'
 
       - name: Gradle Caching
         uses: actions/cache@v3
         with:
           path: |
             ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle*', '**/gradle-wrapper.properties') }}
+            ~/gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Gradle execute permission for gradlew
+        run: chmod +x ./gradlew
+
       - name: Build with Gradle
-        run: |
-          echo "=== Gradle build strategy ==="
-          if [ -f gradlew ] && [ -f gradle/wrapper/gradle-wrapper.jar ]; then
-            echo "Using Gradle Wrapper"
-            chmod +x gradlew
-            ./gradlew clean build --stacktrace
-          elif [ -f gradlew ]; then
-            echo "Gradle Wrapper jar missing, regenerating..."
-            gradle wrapper --gradle-version 8.5
-            chmod +x gradlew
-            ./gradlew clean build --stacktrace
-          else
-            echo "Using system Gradle"
-            gradle clean build --stacktrace
-          fi
+        run: ./gradlew clean build
