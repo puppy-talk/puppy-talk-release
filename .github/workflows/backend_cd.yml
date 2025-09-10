@@ -55,7 +55,7 @@ jobs:
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:backend .
 
       - name: Dockerfile push to repo
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:backend
           
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
