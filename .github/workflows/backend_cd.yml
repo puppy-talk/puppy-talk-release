@@ -51,8 +51,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: .
-          file: ./Dockerfile
+          context: ./puppy-talk-server
+          file: ./puppy-talk-server/Dockerfile
           tags: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:backend
           cache-from: type=gha
           cache-to: type=gha,mode=max
